@@ -10,6 +10,7 @@ package com.vin.teja.service;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
@@ -24,8 +25,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="num1" type="{http://www.w3.org/2001/XMLSchema}float"/>
- *         &lt;element name="num2" type="{http://www.w3.org/2001/XMLSchema}float"/>
+ *         &lt;element name="Status" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -36,45 +36,36 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-    "num1",
-    "num2"
+    "status"
 })
-@XmlRootElement(name = "AddRequest")
-public class AddRequest {
+@XmlRootElement(name = "AliveResponse")
+public class AliveResponse {
 
-    protected float num1;
-    protected float num2;
+    @XmlElement(name = "Status", required = true)
+    protected String status;
 
     /**
-     * Gets the value of the num1 property.
+     * Gets the value of the status property.
      * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public float getNum1() {
-        return num1;
+    public String getStatus() {
+        return status;
     }
 
     /**
-     * Sets the value of the num1 property.
+     * Sets the value of the status property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setNum1(float value) {
-        this.num1 = value;
-    }
-
-    /**
-     * Gets the value of the num2 property.
-     * 
-     */
-    public float getNum2() {
-        return num2;
-    }
-
-    /**
-     * Sets the value of the num2 property.
-     * 
-     */
-    public void setNum2(float value) {
-        this.num2 = value;
+    public void setStatus(String value) {
+        this.status = value;
     }
 
 }
