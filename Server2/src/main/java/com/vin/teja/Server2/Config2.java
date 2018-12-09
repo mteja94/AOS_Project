@@ -22,7 +22,7 @@ public class Config2 extends WsConfigurerAdapter {
         MessageDispatcherServlet servlet = new MessageDispatcherServlet();
         servlet.setApplicationContext(context);
         servlet.setTransformWsdlLocations(true);
-        return new ServletRegistrationBean(servlet, "/Server2/*");
+        return new ServletRegistrationBean(servlet, "/*");
     }
 
 
@@ -36,7 +36,7 @@ public class Config2 extends WsConfigurerAdapter {
 
         DefaultWsdl11Definition definition = new DefaultWsdl11Definition();
         definition.setSchema(userSchema);
-        definition.setLocationUri("/Server2");
+        definition.setLocationUri("/");
         definition.setPortTypeName("Server2Port");
         definition.setTargetNamespace("http://teja.vin.com/service");
         return definition;
