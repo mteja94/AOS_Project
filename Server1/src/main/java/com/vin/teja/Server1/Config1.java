@@ -3,8 +3,10 @@ package com.vin.teja.Server1;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.web.servlet.FrameworkServlet;
 import org.springframework.ws.config.annotation.EnableWs;
 import org.springframework.ws.config.annotation.WsConfigurerAdapter;
 import org.springframework.ws.transport.http.MessageDispatcherServlet;
@@ -14,15 +16,15 @@ import org.springframework.xml.xsd.XsdSchema;
 
 @EnableWs
 @Configuration
+@ComponentScan("com.vin.teja")
 public class Config1 extends WsConfigurerAdapter {
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-	@Bean
-    public ServletRegistrationBean messageDispatcherServlet(ApplicationContext context) {
+	@Bean("messageDispatcherServlet")
+    public ServletRegistrationBean<FrameworkServlet> messageDispatcherServlet(ApplicationContext context) {
         MessageDispatcherServlet servlet = new MessageDispatcherServlet();
         servlet.setApplicationContext(context);
         servlet.setTransformWsdlLocations(true);
-        return new ServletRegistrationBean(servlet, "/Server1/*");
+        return new ServletRegistrationBean<FrameworkServlet>(servlet, "/*");
     }
 
 
@@ -36,11 +38,10 @@ public class Config1 extends WsConfigurerAdapter {
 
         DefaultWsdl11Definition definition = new DefaultWsdl11Definition();
         definition.setSchema(userSchema);
-        definition.setLocationUri("/Server1");
+        definition.setLocationUri("/");
         definition.setPortTypeName("Server1Port");
         definition.setTargetNamespace("http://teja.vin.com/service");
         return definition;
     }
-
 
 }
