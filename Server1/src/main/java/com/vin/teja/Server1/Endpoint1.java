@@ -3,6 +3,7 @@ package com.vin.teja.Server1;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.PriorityQueue;
 
 import org.springframework.ws.server.endpoint.annotation.Endpoint;
 import org.springframework.ws.server.endpoint.annotation.PayloadRoot;
@@ -22,6 +23,14 @@ import com.vin.teja.service.WhichResponse;
 public class Endpoint1 {
 	
     private Map<String, ServerInfo> services = new HashMap<>();
+    
+    public void loadInitialize(int porttemp) {
+    	int loadtemp = 0;
+    	for(String key : services.keySet()) {
+    		if(Arrays.asList(services.get(key).getPort()).contains(porttemp))
+    			services.get(key).setLoad(loadtemp);
+    	}
+    }
     
     	// AddRequest 
 	@PayloadRoot(namespace = "http://teja.vin.com/service",    		
@@ -58,17 +67,51 @@ public class Endpoint1 {
 	public WhichResponse WhichRequest(@RequestPayload WhichRequest whichrequest) {
 		WhichResponse whichresponse = new WhichResponse();
 		String r = whichrequest.getServiceName();
-		String temp = "";
+		int load_t = whichrequest.getLoadInc();
+		String [] temp =  new String [2];
+		int i = 0;
 		for(String key : services.keySet()) {
 			if(Arrays.asList(services.get(key).getServiceNames()).contains(r)) {
-				temp = key;
-				break;
+				temp[i] = key;
+				i++;
 			}
 		}
-		ServerInfo s = services.get(temp);
-		whichresponse.setIPAddress(s.getIpAddress());
-		whichresponse.setPort(s.getPort());		
-		return whichresponse;
+		String serverInf = "";
+ 		for(int j = 0; j<temp.length;j++) {
+			ServerInfo s = services.get(temp[j]);
+			/*whichresponse.setIPAddress(s.getIpAddress());
+			whichresponse.setPort(s.getPort());*/		
+			serverInf = serverInf+s.getKey()+",";
+		}
+ 		serverInf = serverInf.substring(0, (serverInf.length()-1));
+ 		String[] ser_inf = serverInf.split(",");
+ 		System.out.println(serverInf);
+ 		
+/* 		Comparator<Integer> loadComparator = new Comparator<Integer>() {
+ 			@Override
+			public int compare(Integer load1, Integer load2) {
+				return load1.compareTo(load2);
+			}
+ 		};*/
+ 		
+ 		PriorityQueue<Integer> servicePriorityQueue = new PriorityQueue<>();
+ 		for(int k = 0; k < ser_inf.length; k++) {
+ 			servicePriorityQueue.add(services.get(ser_inf[k]).getLoad());
+ 		}
+ 		int reqd_load = servicePriorityQueue.remove();
+ 		String reqd_server = "";
+ 		for(String key : services.keySet()) {
+ 			if(Arrays.asList(services.get(key).getLoad()).contains(reqd_load) && (Arrays.asList(services.get(key).getServiceNames()).contains(r))) {
+ 				reqd_server = key;
+ 				break;
+ 			}
+ 		}
+ 		whichresponse.setServer(reqd_server);
+ 		services.get(reqd_server).setLoad(reqd_load + load_t);
+ 		System.out.println(services.get(reqd_server).getLoad());
+ 		System.out.println(reqd_load);
+ 		System.out.println(reqd_server);
+ 		return whichresponse;
 	}
 	
 	
@@ -88,6 +131,7 @@ public class Endpoint1 {
 		s.setServiceNames(serv_names);
 		this.services.put(s.getKey(), s);
 		aliveresponse.setStatus("Stored");
+		loadInitialize(port);
 		return aliveresponse;
 	}
 	
